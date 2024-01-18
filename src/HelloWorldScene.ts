@@ -1,35 +1,80 @@
 import Phaser from 'phaser'
+import Coin from './objects/Coin'
+import PhysicsManager from './managers/PhysicsManager'
 
 export default class HelloWorldScene extends Phaser.Scene {
-	constructor() {
-		super('hello-world')
-	}
+    public physicsManager: PhysicsManager
 
-	preload() {
-		this.load.setBaseURL('https://labs.phaser.io')
+    constructor() {
+        super('hello-world')
+        this.physicsManager = new PhysicsManager(this, {
+            bound: {
+                x: 10,
+                y: 10,
+                width: 780,
+                height: 580,
+				absorbScale: 0.99,
+            },
+            gravity: 0.05,
+        })
+    }
 
-		this.load.image('sky', 'assets/skies/space3.png')
-		this.load.image('logo', 'assets/sprites/phaser3-logo.png')
-		this.load.image('red', 'assets/particles/red.png')
-	}
+    public preload() {
+        this.load.image('circle', 'assets/circle.png')
+    }
 
-	create() {
-		this.add.image(400, 300, 'sky')
+    public create() {
+        this.physicsManager.init()
+        const diameter = 50
+        const coin1 = new Coin(this, {
+            physicsProps: {
+                vector2: {
+                    x: -1,
+                    y: 0,
+                },
+                size: {
+                    width: diameter,
+                    height: diameter,
+                },
+                mass: 1,
+            },
+        })
+        coin1.setPosition(300, 300)
+        const coin2 = new Coin(this, {
+            physicsProps: {
+                vector2: {
+                    x: 1,
+                    y: -1,
+                },
+                size: {
+                    width: diameter,
+                    height: diameter,
+                },
+                mass: 1,
+            },
+        })
+        coin2.setPosition(400, 300)
+        const coin3 = new Coin(this, {
+            physicsProps: {
+                vector2: {
+                    x: 1,
+                    y: 0,
+                },
+                size: {
+                    width: diameter,
+                    height: diameter,
+                },
+                mass: 1,
+            },
+        })
+        coin3.setPosition(500, 300)
+        const coins = [coin1, coin2, coin3]
+        coins.forEach((c) => {
+            this.physicsManager.addObject(c)
+        })
+    }
 
-		const particles = this.add.particles('red')
-
-		const emitter = particles.createEmitter({
-			speed: 100,
-			scale: { start: 1, end: 0 },
-			blendMode: 'ADD',
-		})
-
-		const logo = this.physics.add.image(400, 100, 'logo')
-
-		logo.setVelocity(100, 200)
-		logo.setBounce(1, 1)
-		logo.setCollideWorldBounds(true)
-
-		emitter.startFollow(logo)
-	}
+    public update() {
+        this.physicsManager.update()
+    }
 }
