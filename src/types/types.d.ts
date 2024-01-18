@@ -28,5 +28,6 @@ interface IPhysicsManagerConfig {
         height: number,
         absorbScale: number
     },
-    gravity: number
+    gravity: number,
+    standardDeltaTime: number
 }

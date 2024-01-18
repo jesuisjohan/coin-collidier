@@ -16,6 +16,7 @@ export default class HelloWorldScene extends Phaser.Scene {
 				absorbScale: 0.99,
             },
             gravity: 0.05,
+            standardDeltaTime: 7
         })
     }
 
@@ -74,7 +75,7 @@ export default class HelloWorldScene extends Phaser.Scene {
         })
     }
 
-    public update() {
-        this.physicsManager.update()
+    public update(_: number, dt: number) {
+        this.physicsManager.update(dt)
     }
 }
