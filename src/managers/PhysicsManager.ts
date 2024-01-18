@@ -25,20 +25,22 @@ export default class PhysicsManager {
         this.objects.push(obj)
     }
 
-    public update() {
+    public update(dt: number) {
         this.objects.forEach((obj) => {
-            this.updateObject(obj)
+            this.updateObject(obj, dt)
         })
     }
 
-    private updateObject(obj: IPhysicsObject) {
+    private updateObject(obj: IPhysicsObject, dt: number) {
         const { size, vector2 } = obj.physicsProps
 
         if (vector2.x === 0 && vector2.y === 0) {
             return
         }
 
-        this.applyWeightToObj(obj)
+        const deltaTimeScale = dt / this.config.standardDeltaTime
+
+        this.applyWeightToObj(obj, deltaTimeScale)
 
         const { boundBottomY, boundTopY, boundLeftX, boundRightX } =
             this.getBoundSides()
@@ -59,17 +61,17 @@ export default class PhysicsManager {
         } else if (stuckLeft) {
             vector2.x = Math.abs(vector2.x) * absorbScale
         }
-        obj.x += vector2.x
+        obj.x += vector2.x * deltaTimeScale
 
         if (stuckBottom) {
             vector2.y = -Math.abs(vector2.y) * absorbScale
         } else if (stuckTop) {
             vector2.y = Math.abs(vector2.y) * absorbScale
         }
-        obj.y += vector2.y
+        obj.y += vector2.y * deltaTimeScale
     }
 
-    private applyWeightToObj(obj: IPhysicsObject) {
+    private applyWeightToObj(obj: IPhysicsObject, deltaTimeScale: number) {
         const { mass, vector2 } = obj.physicsProps
 
         const forceVector2 = {
@@ -77,8 +79,8 @@ export default class PhysicsManager {
             y: mass * this.config.gravity,
         }
 
-        vector2.x = vector2.x + forceVector2.x
-        vector2.y = vector2.y + forceVector2.y
+        vector2.x = vector2.x + forceVector2.x * deltaTimeScale
+        vector2.y = vector2.y + forceVector2.y * deltaTimeScale
     }
 
     private getBoundSides() {
