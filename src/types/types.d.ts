@@ -12,7 +12,8 @@ interface IPhysicsProps {
     size: {
         width: number,
         height: number
-    }
+    },
+    mass: number
 }
 
 interface IPhysicsObject extends Phaser.GameObjects.Image {
@@ -24,6 +25,8 @@ interface IPhysicsManagerConfig {
         x: number,
         y: number,
         width: number,
-        height: number
-    }
+        height: number,
+        absorbScale: number
+    },
+    gravity: number
 }

@@ -38,6 +38,8 @@ export default class PhysicsManager {
             return
         }
 
+        this.applyWeightToObj(obj)
+
         const { boundBottomY, boundTopY, boundLeftX, boundRightX } =
             this.getBoundSides()
         const halfWidth = size.width / 2
@@ -50,20 +52,33 @@ export default class PhysicsManager {
         const stuckLeft = objLeftX <= boundLeftX
         const stuckBottom = objBottomY >= boundBottomY
         const stuckTop = objTopY <= boundTopY
+        const { absorbScale } = this.config.bound
 
         if (stuckRight) {
-            vector2.x = -Math.abs(vector2.x)
+            vector2.x = -Math.abs(vector2.x) * absorbScale
         } else if (stuckLeft) {
-            vector2.x = Math.abs(vector2.x)
+            vector2.x = Math.abs(vector2.x) * absorbScale
         }
         obj.x += vector2.x
 
         if (stuckBottom) {
-            vector2.y = -Math.abs(vector2.y)
+            vector2.y = -Math.abs(vector2.y) * absorbScale
         } else if (stuckTop) {
-            vector2.y = Math.abs(vector2.y)
+            vector2.y = Math.abs(vector2.y) * absorbScale
         }
         obj.y += vector2.y
+    }
+
+    private applyWeightToObj(obj: IPhysicsObject) {
+        const { mass, vector2 } = obj.physicsProps
+
+        const forceVector2 = {
+            x: 0,
+            y: mass * this.config.gravity,
+        }
+
+        vector2.x = vector2.x + forceVector2.x
+        vector2.y = vector2.y + forceVector2.y
     }
 
     private getBoundSides() {
